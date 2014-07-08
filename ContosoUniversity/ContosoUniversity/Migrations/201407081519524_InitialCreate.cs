@@ -57,3 +57,6 @@ namespace ContosoUniversity.Migrations
         }
     }
 }
+
+//pgs. 102 - 103, Contoso University
+

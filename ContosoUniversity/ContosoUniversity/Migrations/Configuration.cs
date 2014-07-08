@@ -120,3 +120,6 @@ namespace ContosoUniversity.Migrations
         }
     }
 }
+
+//pgs. 97 - 100
+
