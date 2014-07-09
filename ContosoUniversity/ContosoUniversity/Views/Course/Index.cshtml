@@ -1,0 +1,101 @@
+﻿@model IEnumerable<ContosoUniversity.Models.Course>
+@{ ViewBag.Title = "Courses";
+}
+<h2>Courses</h2>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+<table class="table">
+    <tr>
+        <th> @Html.DisplayNameFor(model => model.CourseID) </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Credits)
+        </th>
+        <th> Department </th>
+        <th></th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td> @Html.DisplayFor(modelItem => item.CourseID) </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Credits)
+            </td>
+            <td> @Html.DisplayFor(modelItem => item.Department.Name) </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.CourseID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.CourseID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.CourseID })
+            </td>
+        </tr>
+    }
+</table>
+
+
+
+
+//pgs. 163 - 164, Contonso University
+
+//Following changes to the scaffolded code:
+//   1. Changed the heading from Index to Courses.
+//   2. Added a Number column that shows the CourseID property value. 
+//      By default, primary keys aren't scaffolded because normally they are meaningless to end users. 
+//      However, in this case the primary key is meaningful and you want to show it.
+//   3.  Moved the Department column to the right side and changed its heading. The scaffolder correctly chose to display the Name property from the Department entity, but here in the Course page the column heading should be Department rather than Name
+
+
+//Original code
+
+
+@*@model IEnumerable<ContosoUniversity.Models.Course>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Department.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Credits)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Department.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Title)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Credits)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.CourseID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.CourseID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.CourseID })
+        </td>
+    </tr>
+}
+
+</table>*@

@@ -1,0 +1,174 @@
+﻿@model ContosoUniversity.ViewModels.InstructorIndexData
+@{ ViewBag.Title = "Instructors";
+}
+<h2>Instructors</h2>
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>Last Name</th>
+        <th>First Name</th>
+        <th>Hire Date</th>
+        <th>Office</th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model.Instructors)
+    {
+        string selectedRow = ""; if (item.ID == ViewBag.InstructorID) { selectedRow = "success"; }
+        <tr class="@selectedRow">
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstMidName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HireDate)
+            </td>
+            <td> @if (item.OfficeAssignment != null)
+            { @item.OfficeAssignment.Location } </td>
+            <td>
+                @Html.ActionLink("Select", "Index", new { id = item.ID }) |
+                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+</table>
+
+@if (Model.Courses != null)                             //This code reads the Courses property of the view model to display a list of courses. 
+                                                        //It also provides a Select hyperlink that sends the ID of the selected course to the Index action method.
+{
+    <h3>Courses Taught by Selected Instructor</h3>
+    <table class="table">
+        <tr>
+            <th></th>
+            <th>Number</th>
+            <th>Title</th>
+            <th>Department</th>
+        </tr>
+        @foreach (var item in Model.Courses)
+        {
+            string selectedRow = "";
+            if (item.CourseID == ViewBag.CourseID)
+            {
+                selectedRow = "success";
+            }
+            <tr class="@selectedRow">
+                <td>
+                    @Html.ActionLink("Select", "Index", new { courseID = item.CourseID })
+                </td>
+                <td>
+                    @item.CourseID
+                </td>
+                <td>
+                    @item.Title
+                </td>
+                <td>
+                    @item.Department.Name
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+@if (Model.Enrollments != null)                 //Reads the Enrollments property of the view model in order to display a list of students enrolled in the course.
+{
+    <h3>
+        Students Enrolled in Selected Course
+    </h3>
+    <table class="table">
+        <tr>
+            <th>Name</th>
+            <th>Grade</th>
+        </tr>
+        @foreach (var item in Model.Enrollments)
+        {
+            <tr>
+                <td>
+                    @item.Student.FullName
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Grade)
+                </td>
+            </tr>
+        }
+    </table>
+}
+
+
+    //pgs. 171 - 172, Contoso Unversity
+
+    //Made the following changes to the existing code:
+    //    1.  Changed the model class to InstructorIndexData.
+    //    2.  Changed the page title from Index to Instructors.
+    //    3.  Added an Office column that displays item.OfficeAssignment.Location only if item.OfficeAssignment is not null.
+    //(Because this is a one-to-zero-or-one relationship, there might not be a related OfficeAssignment entity.)
+    //    4.  Added code that will dynamically add class="success" to the tr element of the selected instructor. This sets a
+    //background color for the selected row using a Bootstrap class.
+    //    5.  Added a new ActionLink labeled Select immediately before the other links in each row, which causes the selected
+    //instructor ID to be sent to the Index method.
+
+
+    //pg. 175, Contoso University; code displays a list of courses related to an instructor when an instructor is selected
+
+    //pg. 176, Contoso Unviersity; displays a list of the students who are enrolled in a course when that course is selected.
+
+
+
+    //Original code
+
+@*@model IEnumerable<ContosoUniversity.Models.Instructor>
+
+    @{
+        ViewBag.Title = "Index";
+    }
+
+    <h2>Index</h2>
+
+    <p>
+        @Html.ActionLink("Create New", "Create")
+    </p>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.OfficeAssignment.Location)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FirstMidName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HireDate)
+            </th>
+            <th></th>
+        </tr>
+
+    @foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OfficeAssignment.Location)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FirstMidName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HireDate)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+                @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            </td>
+        </tr>
+    }
+
+    </table>*@
