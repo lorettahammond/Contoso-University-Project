@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using ContosoUniversity.DAL;
 using ContosoUniversity.Models;
+using System.Data.Entity.Infrastructure;
 
 namespace ContosoUniversity.Controllers
 {
@@ -41,7 +42,12 @@ namespace ContosoUniversity.Controllers
         // GET: Course/Create
         public ActionResult Create()
         {
-            ViewBag.DepartmentID = new SelectList(db.Departments, "DepartmentID", "Name");
+            PopulateDepartmentsDropDownList();   //method gets a list of all departments sorted by name, creates a SelectList collection 
+                                                //for a drop-down list, and passes the collection to the view in a ViewBag property. 
+                                                //The method accepts the optional selectedDepartment parameter that allows the calling 
+                                                //code to specify the item that will be selected when the drop-down list is rendered. 
+                                                //The view will pass the name DepartmentID to the DropDownList helper, and the helper 
+                                                //then knows to look in the ViewBag object for a SelectList named DepartmentID.
             return View();
         }
 
@@ -52,17 +58,25 @@ namespace ContosoUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "CourseID,Title,Credits,DepartmentID")] Course course)
         {
+            try 
+            {
             if (ModelState.IsValid)
             {
                 db.Courses.Add(course);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-
-            ViewBag.DepartmentID = new SelectList(db.Departments, "DepartmentID", "Name", course.DepartmentID);
-            return View(course);
+            
         }
-
+        catch (RetryLimitExceededException) /* dex */
+        {
+        
+        //Log the error (uncomment dex variable name and add a line here to write a log.) 
+        ModelState.AddModelError ("", "Unable to save changes. Try again, and if the problem persists, see your system administrator."); 
+        } 
+        PopulateDepartmentsDropDownList (course.DepartmentID);
+        return View(course); 
+    }   
         // GET: Course/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -75,7 +89,7 @@ namespace ContosoUniversity.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.DepartmentID = new SelectList(db.Departments, "DepartmentID", "Name", course.DepartmentID);
+            PopulateDepartmentsDropDownList(course.DepartmentID);  //The HttpGet Edit method sets the selected item, based on the ID of the department that is already assigned to the course being edited
             return View(course);
         }
 
@@ -86,14 +100,33 @@ namespace ContosoUniversity.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit([Bind(Include = "CourseID,Title,Credits,DepartmentID")] Course course)
         {
-            if (ModelState.IsValid)
+            try 
             {
-                db.Entry(course).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                if (ModelState.IsValid)
+                {
+                    db.Entry(course).State = EntityState.Modified;
+                    db.SaveChanges();
+                    return RedirectToAction("Index");
             }
-            ViewBag.DepartmentID = new SelectList(db.Departments, "DepartmentID", "Name", course.DepartmentID);
-            return View(course);
+        } 
+        catch (RetryLimitExceededException /* dex */) 
+        { 
+            //Log the error (uncomment dex variable name and add a line here to write a log.) 
+            ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists, see your system administrator."); 
+        }
+            PopulateDepartmentsDropDownList(course.DepartmentID);                //  The HttpPost methods for both Create and Edit also include code that sets 
+                                                                                 //the selected item when they redisplay the page after an error
+                                                                                //This code ensures that when the page is redisplayed to show the error message, 
+                                                                                //whatever department was selected stays selected.
+         return View(course);
+        }
+        
+        private void PopulateDepartmentsDropDownList(object selectedDepartment = null) 
+        { 
+            var departmentsQuery = from d in db.Departments 
+                orderby d.Name 
+                select d; 
+            ViewBag.DepartmentID = new SelectList(departmentsQuery, "DepartmentID", "Name", selectedDepartment); 
         }
 
         // GET: Course/Delete/5
@@ -134,3 +167,4 @@ namespace ContosoUniversity.Controllers
 }
 
 //pg. 164, Contoso University
+//pgs. 184-= 185, Contoso University
